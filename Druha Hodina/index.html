@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javascript test</title>
+    <script src="scriptMain.js" type="module"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        div {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin-bottom: 30px;
+        }
+
+        input[type="number"] {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 10px;
+            font-size: 16px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="number"]:focus {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+            background: linear-gradient(45deg, #ff5252, #ff9800);
+        }
+
+        button {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+            background: linear-gradient(45deg, #26d0ce, #1a9e89);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Add some sparkle effects */
+        div::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            border-radius: 22px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            animation: rotate 2s linear infinite;
+        }
+
+        div:hover::before {
+            opacity: 0.4;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Animated result styles */
+        .result-number {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #eb4d4b, #6c5ce7);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbowShift 2s ease-in-out infinite, bounce 1s ease-in-out;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        .sparkle {
+            position: relative;
+            display: inline-block;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .sparkle::before {
+            content: '✨';
+            position: absolute;
+            left: -30px;
+            animation: sparkleMove 1.5s ease-in-out infinite;
+        }
+
+        .sparkle::after {
+            content: '🌟';
+            position: absolute;
+            right: -30px;
+            animation: sparkleMove 1.5s ease-in-out infinite reverse;
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes sparkleMove {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 0.7; }
+        }
+
+        .celebration {
+            animation: celebrate 0.8s ease-in-out;
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1) rotate(5deg); }
+            50% { transform: scale(1.2) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* Individual spinning "add" texts */
+        .spinning-add-text {
+            position: fixed;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            user-select: none;
+            pointer-events: none;
+            z-index: 1000;
+            
+            /* Each text will have individual animations */
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #eb4d4b, #6c5ce7);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Different spinning speeds */
+        .spin-fast { animation: rapidSpin 0.2s linear infinite, colorShiftFast 0.15s linear infinite; }
+        .spin-medium { animation: rapidSpin 0.4s linear infinite, colorShiftMedium 0.3s linear infinite; }
+        .spin-slow { animation: rapidSpin 0.6s linear infinite, colorShiftSlow 0.5s linear infinite; }
+
+        @keyframes rapidSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes colorShiftFast {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 200% 50%; }
+            75% { background-position: 300% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        @keyframes colorShiftMedium {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes colorShiftSlow {
+            0% { background-position: 0% 50%; }
+            33% { background-position: 50% 50%; }
+            66% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="number" id="firstNumber" placeholder="Zadaj prve číslo">
+        <input type="number" id="secondNumber" placeholder="Zadaj druhe číslo">
+        <button id="calculateBtn">Vypočítaj</button>
+
+    </div>
+    <h1 id="resultlabel">Vysledok</h1>
+    
+    <!-- 100 spinning "add" texts will be generated by JavaScript -->
+    <div id="spinning-texts-container"></div>
+</body>
+</html>

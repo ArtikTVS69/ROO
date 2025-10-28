@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONDAY LEFT ME BROKEN 😭</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #000000, #1a1a1a, #333333, #000000);
+            background-size: 400% 400%;
+            animation: darkGradient 2s ease infinite;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Comic Sans MS', cursive;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .meme-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .cat-gif {
+            width: 80vw;
+            height: 80vh;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+            animation: bounce 2s ease-in-out infinite, glow 1.5s ease-in-out infinite alternate;
+        }
+
+        .meme-text {
+            position: absolute;
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            animation: textBounce 1s ease-in-out infinite;
+            z-index: 100;
+        }
+
+        .top-text {
+            top: 10%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .bottom-text {
+            bottom: 10%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            color: #ff6b6b;
+        }
+
+        .crying-emojis {
+            position: absolute;
+            font-size: 3rem;
+            animation: fall 3s linear infinite;
+        }
+
+        .volume-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        .volume-control button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .volume-control button:hover {
+            background: #ff5252;
+        }
+
+        @keyframes darkGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1) translateY(0px); }
+            50% { transform: scale(1.05) translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 50px rgba(255, 255, 255, 0.3); }
+            100% { box-shadow: 0 0 100px rgba(255, 107, 107, 0.6); }
+        }
+
+        @keyframes textBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes fall {
+            0% { 
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .meme-text {
+                font-size: 2rem;
+            }
+            .cat-gif {
+                width: 95vw;
+                height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="volume-control">
+        <button onclick="playSound()">🔊 PLAY SOUND</button>
+        <button onclick="stopSound()">🔇 STOP</button>
+    </div>
+
+    <div class="meme-container">
+        <div class="meme-text top-text">WHEN THE RESULT IS -67</div>
+        
+        <!-- Using your local Monday cat GIF -->
+        <img class="cat-gif" src="monday-left-me-broken-cat.gif" alt="Monday Left Me Broken Cat Meme" 
+             onerror="this.src='https://i.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif';">
+        
+        <div class="meme-text bottom-text">🎵 MONDAY LEFT ME BROKEN 🎵</div>
+    </div>
+
+    <!-- Audio element for the Monday song -->
+    <audio id="mondayAudio" loop preload="auto">
+        <source src="monday-left-me-broken.mp3" type="audio/mpeg">
+        <source src="monday-left-me-broken.wav" type="audio/wav">
+        <source src="monday-left-me-broken.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        // Create falling crying emojis
+        function createFallingEmojis() {
+            const emojis = ['😭', '💔', '😢', '🥺', '😿', '💧'];
+            
+            setInterval(() => {
+                const emoji = document.createElement('div');
+                emoji.className = 'crying-emojis';
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = Math.random() * 100 + 'vw';
+                emoji.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                
+                document.body.appendChild(emoji);
+                
+                // Remove emoji after animation
+                setTimeout(() => {
+                    if (emoji && emoji.parentNode) {
+                        emoji.parentNode.removeChild(emoji);
+                    }
+                }, 5000);
+            }, 500);
+        }
+
+        // Sound functions
+        function playSound() {
+            const audio = document.getElementById('mondayAudio');
+            audio.volume = 0.7; // Set volume to 70%
+            
+            // Try to play the actual audio file
+            audio.play().then(() => {
+                console.log('Playing Monday Left Me Broken song!');
+            }).catch((error) => {
+                console.log('Could not play audio file:', error);
+                // Fallback to alert if audio file not found
+                alert('🎵 MONDAY LEFT ME BROKEN 🎵\n\nTo hear the real song:\n1. Download the "Monday Left Me Broken" audio\n2. Save it as "monday-left-me-broken.mp3" in this folder\n3. Refresh and try again!');
+            });
+        }
+
+        function stopSound() {
+            const audio = document.getElementById('mondayAudio');
+            audio.pause();
+            audio.currentTime = 0;
+        }
+
+        // Auto-play functionality (some browsers block this)
+        window.addEventListener('load', () => {
+            createFallingEmojis();
+            
+            // Try to auto-play after a short delay (browsers may block this)
+            setTimeout(() => {
+                playSound();
+            }, 1500);
+        });
+
+        // Add click anywhere to play sound
+        document.addEventListener('click', () => {
+            playSound();
+        });
+    </script>
+</body>
+</html>
