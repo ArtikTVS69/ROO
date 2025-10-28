@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: #ff9800;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .cancel-btn {
+            background-color: #999;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .total {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #f44336;
+        }
+
+        .expense-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .month-header {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .edit-mode {
+            background-color: #fff3cd;
+            padding: 10px;
+        }
+
+        .edit-input {
+            padding: 5px;
+            margin: 2px;
+            border: 1px solid #ff9800;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Expense Tracker</h1>
+        
+        <!-- formulár na pridanie výdavku -->
+        <div class="container">
+            <h3>Pridať nový výdavok</h3>
+            <input type="text" v-model="newExpense.name" placeholder="Názov výdavku" @keypress.enter="addExpense">
+            <input type="date" v-model="newExpense.date">
+            <input type="number" v-model="newExpense.amount" placeholder="Suma (€)" step="0.01" @keypress.enter="addExpense">
+            <button class="add-btn" @click="addExpense">Pridať</button>
+            <div class="error" v-if="error">{{ error }}</div>
+        </div>
+
+        <!-- celková suma -->
+        <div class="container">
+            <h2>Celkové výdavky</h2>
+            <div class="total">{{ totalAmount }} €</div>
+        </div>
+
+        <!-- zoznam výdavkov -->
+        <div class="container">
+            <p v-if="expenses.length === 0" style="text-align:center; color:#999;">Zatiaľ žiadne výdavky</p>
+            
+            <!-- pre každý mesiac -->
+            <div v-for="month in sortedMonths" :key="month">
+                <div class="month-header">
+                    {{ getMonthName(month) }} - {{ getMonthTotal(month) }} €
+                </div>
+                
+                <!-- pre každý výdavok v mesiaci -->
+                <div v-for="expense in getMonthExpenses(month)" :key="expense.id">
+                    <!-- normálny režim -->
+                    <div v-if="editingId !== expense.id" class="expense-item">
+                        <span><strong>{{ expense.name }}</strong> - {{ formatDate(expense.date) }}</span>
+                        <span>
+                            <strong style="color:#f44336;">{{ expense.amount.toFixed(2) }} €</strong>
+                            <button class="edit-btn" @click="startEdit(expense)">Upraviť</button>
+                            <button class="delete-btn" @click="deleteExpense(expense.id)">Zmazať</button>
+                        </span>
+                    </div>
+                    
+                    <!-- edit režim -->
+                    <div v-else class="edit-mode">
+                        <input type="text" v-model="editedExpense.name" class="edit-input" placeholder="Názov">
+                        <input type="date" v-model="editedExpense.date" class="edit-input">
+                        <input type="number" v-model="editedExpense.amount" class="edit-input" step="0.01">
+                        <button class="save-btn" @click="saveEdit">Uložiť</button>
+                        <button class="cancel-btn" @click="cancelEdit">Zrušiť</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+        createApp({
+            data() {
+                return {
+                    // pole všetkých výdavkov
+                    expenses: [],
+                    // nový výdavok ktorý pridávame
+                    newExpense: {
+                        name: '',
+                        date: this.getTodayDate(),
+                        amount: ''
+                    },
+                    // chybová hláška
+                    error: '',
+                    // ID výdavku ktorý upravujeme
+                    editingId: null,
+                    // kópia výdavku na úpravu
+                    editedExpense: {
+                        name: '',
+                        date: '',
+                        amount: ''
+                    }
+                }
+            },
+            computed: {
+                // celková suma všetkých výdavkov
+                totalAmount() {
+                    const total = this.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+                    return total.toFixed(2);
+                },
+                
+                // zoskupené výdavky podľa mesiacov
+                groupedExpenses() {
+                    const grouped = {};
+                    this.expenses.forEach(exp => {
+                        const month = exp.date.substring(0, 7); // "2025-10"
+                        if (!grouped[month]) {
+                            grouped[month] = [];
+                        }
+                        grouped[month].push(exp);
+                    });
+                    return grouped;
+                },
+                
+                // zoradené mesiace od najnovšieho
+                sortedMonths() {
+                    return Object.keys(this.groupedExpenses).sort().reverse();
+                }
+            },
+            methods: {
+                // vráti dnešný dátum vo formáte YYYY-MM-DD
+                getTodayDate() {
+                    return new Date().toISOString().split('T')[0];
+                },
+                
+                // pridá nový výdavok
+                addExpense() {
+                    // validácia
+                    if (!this.newExpense.name.trim()) {
+                        this.showError('Názov nemôže byť prázdny!');
+                        return;
+                    }
+                    if (!this.newExpense.date) {
+                        this.showError('Musíš zadať dátum!');
+                        return;
+                    }
+                    if (!this.newExpense.amount || parseFloat(this.newExpense.amount) <= 0) {
+                        this.showError('Suma musí byť kladné číslo!');
+                        return;
+                    }
+                    
+                    // vytvorí nový výdavok
+                    const expense = {
+                        id: Date.now(),
+                        name: this.newExpense.name.trim(),
+                        date: this.newExpense.date,
+                        amount: parseFloat(this.newExpense.amount)
+                    };
+                    
+                    this.expenses.push(expense);
+                    this.saveToLocalStorage();
+                    
+                    // vyčistí formulár
+                    this.newExpense.name = '';
+                    this.newExpense.amount = '';
+                    this.newExpense.date = this.getTodayDate();
+                    this.error = '';
+                },
+                
+                // začne úpravu výdavku
+                startEdit(expense) {
+                    this.editingId = expense.id;
+                    this.editedExpense = {
+                        name: expense.name,
+                        date: expense.date,
+                        amount: expense.amount
+                    };
+                },
+                
+                // uloží úpravy
+                saveEdit() {
+                    const expense = this.expenses.find(exp => exp.id === this.editingId);
+                    if (expense) {
+                        expense.name = this.editedExpense.name.trim();
+                        expense.date = this.editedExpense.date;
+                        expense.amount = parseFloat(this.editedExpense.amount);
+                        this.saveToLocalStorage();
+                    }
+                    this.editingId = null;
+                },
+                
+                // zruší úpravu
+                cancelEdit() {
+                    this.editingId = null;
+                },
+                
+                // zmaže výdavok
+                deleteExpense(id) {
+                    if (confirm('Naozaj chceš zmazať tento výdavok?')) {
+                        this.expenses = this.expenses.filter(exp => exp.id !== id);
+                        this.saveToLocalStorage();
+                    }
+                },
+                
+                // zobrazí chybu na 3 sekundy
+                showError(message) {
+                    this.error = message;
+                    setTimeout(() => {
+                        this.error = '';
+                    }, 3000);
+                },
+                
+                // vráti výdavky pre daný mesiac, zoradené
+                getMonthExpenses(month) {
+                    const expenses = this.groupedExpenses[month] || [];
+                    return expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+                },
+                
+                // vráti celkovú sumu pre mesiac
+                getMonthTotal(month) {
+                    const expenses = this.groupedExpenses[month] || [];
+                    const total = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+                    return total.toFixed(2);
+                },
+                
+                // vráti slovenský názov mesiaca
+                getMonthName(monthKey) {
+                    const [year, monthNum] = monthKey.split('-');
+                    const monthNames = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún',
+                                        'Júl', 'August', 'September', 'Október', 'November', 'December'];
+                    return `${monthNames[parseInt(monthNum) - 1]} ${year}`;
+                },
+                
+                // naformátuje dátum do DD.MM.YYYY
+                formatDate(date) {
+                    const [y, m, d] = date.split('-');
+                    return `${d}.${m}.${y}`;
+                },
+                
+                // uloží do localStorage
+                saveToLocalStorage() {
+                    localStorage.setItem('expenses', JSON.stringify(this.expenses));
+                },
+                
+                // načíta z localStorage
+                loadFromLocalStorage() {
+                    const data = localStorage.getItem('expenses');
+                    if (data) {
+                        this.expenses = JSON.parse(data);
+                    }
+                }
+            },
+            mounted() {
+                // načíta výdavky pri spustení
+                this.loadFromLocalStorage();
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
