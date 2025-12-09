@@ -1,7 +1,7 @@
 <template>
   <div class="page">
-    <h1>O aplikacii - VueUse Demo</h1>
-    <p>Toto je jednoducha demo aplikacia s Vue Router.</p>
+    <h1>O aplikacii - Macko Vue</h1>
+    <p>Toto je jednoducha Macko Appka.</p>
     <p>Query parametre: {{ $route.query }}</p>
     
     <!-- VueUse: useLocalStorage -->

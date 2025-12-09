@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1>Domov - VueUse Demo</h1>
+    <h1>Domov - Macko Vue</h1>
     <p>Vitaj na hlavnej stranke!</p>
     <p>Aktualna cesta: {{ $route.path }}</p>
     
