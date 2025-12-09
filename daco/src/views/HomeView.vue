@@ -24,17 +24,17 @@
 import { useRouter, useRoute } from 'vue-router'
 import { useMouse, useCounter } from '@vueuse/core'
 
-// Vue Router
+// router
 const router = useRouter()
 const route = useRoute()
 
-// VueUse: sleduje poziciu mysi
+// pozicia mysi
 const { x, y } = useMouse()
 
-// VueUse: pocitadlo s funkciami
+// pocitadlo
 const { count, inc, dec, reset } = useCounter()
 
-// programove navigovanie
+// chod na about stranku
 const goToAbout = () => {
   router.push('/about')
 }

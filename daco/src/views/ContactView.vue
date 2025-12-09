@@ -37,18 +37,18 @@ import { useNow, useOnline, useIntervalFn } from '@vueuse/core'
 
 const router = useRouter()
 
-// VueUse: aktualny cas (aktualizuje sa kazdu sekundu)
+// aktualny cas
 const now = useNow()
 
-// VueUse: online/offline status
+// ci mam internet
 const isOnline = useOnline()
 
-// formatovanie casu
+// formatuje cas
 const formatTime = (date) => {
   return date.toLocaleTimeString('sk-SK')
 }
 
-// formular data
+// veci z formulara
 const name = ref('')
 const email = ref('')
 const message = ref('')
@@ -64,7 +64,7 @@ const submitForm = () => {
   
   submitted.value = true
   
-  // VueUse: interval namiesto setInterval
+  // odpocitavanie 3 sekundy
   const { pause } = useIntervalFn(() => {
     countdown.value--
     if (countdown.value === 0) {

@@ -24,7 +24,7 @@ const router = createRouter({
       component: UsersView,
     },
     {
-      // dynamicky parameter :id
+      // parameter :id z url
       path: '/users/:id',
       name: 'user-detail',
       component: UserDetail,
@@ -42,7 +42,7 @@ const router = createRouter({
   ],
 })
 
-// navigation guard - spusti sa pred kazdou navigaciou
+// vypise do konzoly kam idem
 router.beforeEach((to, from) => {
   console.log('Idem z', from.path, 'na', to.path)
 })

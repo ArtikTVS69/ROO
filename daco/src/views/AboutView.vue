@@ -27,10 +27,10 @@ import { useLocalStorage, useToggle } from '@vueuse/core'
 const router = useRouter()
 const route = useRoute()
 
-// VueUse: ulozi do localStorage automaticky
+// ulozi meno do pc
 const meno = useLocalStorage('user-meno', '')
 
-// VueUse: prepinac true/false
+// prepinac zapnute/vypnute
 const [zapnute, toggle] = useToggle()
 
 const addQuery = () => {

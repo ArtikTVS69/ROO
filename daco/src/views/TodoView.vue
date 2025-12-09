@@ -1,8 +1,15 @@
 <template>
-  <div class="page">
-    <h1>📝 TODO List</h1>
+  <div class="page" :class="{ dark: isDark }">
+    <div class="header">
+      <h1>📝 TODO List</h1>
+      
+      <!-- VueUse: useDark prepinac -->
+      <button @click="toggleDark()" class="theme-toggle">
+        {{ isDark ? '☀️' : '🌙' }}
+      </button>
+    </div>
     
-    <!-- VueUse: useNow pre timestamp -->
+    <!-- useNow pre timestamp -->
     <p style="color: gray; font-size: 12px;">{{ formatDate(now) }}</p>
     
     <!-- formular na pridanie -->
@@ -70,23 +77,27 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useLocalStorage, useNow, useFocus } from '@vueuse/core'
+import { useLocalStorage, useNow, useFocus, useDark, useToggle } from '@vueuse/core'
 
-// VueUse: localStorage (automaticky uklada)
+// tmavy rezim
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
+
+// ulozenie do localStorage
 const todos = useLocalStorage('todos', [])
 
-// VueUse: aktualny cas
+// aktualny cas
 const now = useNow()
 
-// VueUse: focus na input
+// automaticky focus
 const inputRef = ref(null)
 useFocus(inputRef, { initialValue: true })
 
-// formular
+// premenné
 const newTodo = ref('')
 const filter = ref('all')
 
-// pridanie todo
+// pridat todo
 const addTodo = () => {
   if (newTodo.value.trim()) {
     todos.value.push({
@@ -99,37 +110,39 @@ const addTodo = () => {
   }
 }
 
-// vymazanie
+// vymazat jedno
 const deleteTodo = (id) => {
   todos.value = todos.value.filter(t => t.id !== id)
 }
 
-// vymazanie hotovych
+// vymaz hotove
 const clearCompleted = () => {
   todos.value = todos.value.filter(t => !t.done)
 }
 
-// vymazanie vsetkych
+// vymaz vsetko
 const clearAll = () => {
   if (confirm('Naozaj vymazať všetky úlohy?')) {
     todos.value = []
   }
 }
 
-// ulozenie (kvoli checkboxom)
+// ulozi ked kliknem checkbox
 const saveTodos = () => {
-  // nic, useLocalStorage uklada automaticky
+  // samo sa uklada
 }
 
-// computed hodnoty
+// kolko je hotovych
 const completedCount = computed(() => 
   todos.value.filter(t => t.done).length
 )
 
+// kolko este treba urobit
 const remainingCount = computed(() => 
   todos.value.filter(t => !t.done).length
 )
 
+// filtrovanie podla tlacidiel
 const filteredTodos = computed(() => {
   if (filter.value === 'active') return todos.value.filter(t => !t.done)
   if (filter.value === 'completed') return todos.value.filter(t => t.done)
@@ -159,6 +172,80 @@ const formatTime = (iso) => {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+  transition: all 0.3s;
+}
+
+/* Dark mode */
+.page.dark {
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.page.dark .add-form input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
+.page.dark .stats {
+  background: #2a2a2a;
+  color: white;
+}
+
+.page.dark .filter button {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
+.page.dark .filter button.active {
+  background: #2196F3;
+}
+
+.page.dark .todo-item {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
+.page.dark .todo-item.completed {
+  background: #1a1a1a;
+}
+
+.page.dark .actions button {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
+.page.dark .actions button:hover {
+  background: #333;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.theme-toggle {
+  font-size: 24px;
+  background: none;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+.page.dark .theme-toggle {
+  border-color: #444;
 }
 
 h1 {

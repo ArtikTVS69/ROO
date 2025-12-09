@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <!-- jednoducha navigacia -->
+    <!-- menu -->
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
@@ -9,7 +9,7 @@
       <RouterLink to="/todo">TODO List</RouterLink>
     </nav>
 
-    <!-- tu sa zobrazi aktualna stranka -->
+    <!-- tu sa ukaze stranka -->
     <RouterView />
   </div>
 </template>
@@ -19,7 +19,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <style>
-/* minimalisticky styl */
+/* styl */
 body {
   margin: 0;
   font-family: Arial;

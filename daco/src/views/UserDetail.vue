@@ -27,11 +27,11 @@ export default {
     }
   },
   computed: {
-    // ziskanie parametra z URL
+    // id z url
     userId() {
       return this.$route.params.id
     },
-    // najdenie pouzivatela podla ID
+    // najdi usera
     user() {
       return this.users.find(u => u.id == this.userId)
     }

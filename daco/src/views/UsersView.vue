@@ -3,7 +3,7 @@
     <h1>Pouzivatelia</h1>
     <ul>
       <li v-for="user in users" :key="user.id">
-        <!-- dynamicky link na detail pouzivatela -->
+        <!-- link na detail -->
         <router-link :to="'/users/' + user.id">
           {{ user.name }}
         </router-link>
